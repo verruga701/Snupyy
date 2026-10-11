@@ -1,0 +1,75 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Un día especial 🌻</title><style>*{box-sizing:border-box}body{margin:0;overflow:hidden;background:#16142f;color:white;font-family:system-ui,-apple-system,Segoe UI,sans-serif}canvas{display:block}#overlay{position:fixed;inset:0;pointer-events:none;display:grid;place-items:center;text-align:center}#intro{position:absolute;inset:0;display:grid;place-items:center;background:radial-gradient(circle at 50% 65%,#f9a8c6,#bc6cb8 50%,#252052);transition:opacity 1.8s}#intro.off{opacity:0}#intro h1{font-size:clamp(42px,10vw,100px);line-height:1.05;margin:0;padding:25px;text-shadow:0 12px 40px #622650aa;animation:fall 2.2s cubic-bezier(.2,.8,.2,1) both}#intro p{font-size:clamp(17px,4vw,27px);opacity:0;animation:fade 1.5s 1.7s forwards}#caption{position:absolute;bottom:11%;width:min(90%,650px);font-size:clamp(22px,5vw,40px);font-weight:800;text-shadow:0 3px 22px #35264a;opacity:0;transition:opacity .8s;letter-spacing:.01em}#caption.show{opacity:1}#final{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transition:opacity 2s;background:linear-gradient(transparent,#56264b77);padding:20px}#final.show{opacity:1}#final h2{font-size:clamp(35px,9vw,76px);margin:0 0 14px;text-shadow:0 6px 30px #9d2d63}#final p{font-size:clamp(18px,4vw,28px);max-width:650px;line-height:1.5;margin:auto;text-shadow:0 4px 20px #5c285c}#start{position:fixed;z-index:20;bottom:5%;left:50%;transform:translateX(-50%);background:#fff;color:#8c3062;border:0;padding:16px 25px;border-radius:50px;font-size:16px;font-weight:800;box-shadow:0 8px 30px #0004;cursor:pointer;white-space:nowrap}#hint{position:fixed;top:15px;left:15px;font-size:12px;opacity:.65;z-index:10}@keyframes fall{from{opacity:0;transform:translateY(-90vh) rotate(-6deg) scale(.7)}to{opacity:1;transform:translateY(0) rotate(0) scale(1)}}@keyframes fade{to{opacity:1}}@media(prefers-reduced-motion:reduce){#intro h1{animation:none}#intro p{animation:none;opacity:1}}</style></head><body><div id="hint">Una sorpresa para ti ✨</div><div id="overlay"><div id="intro"><div><h1>¡Feliz Día<br>de la Niña! 🌸</h1><p>Hoy el mundo tiene algo especial para ti…</p></div></div><div id="caption"></div><div id="final"><div><h2>¡Feliz Día de la Niña! 💗</h2><p>Que nunca te falten razones para sonreír, sueños por cumplir y flores que iluminen tus días. Estos girasoles son para ti. 🌻</p></div></div></div><button id="start">▶ Comenzar la sorpresa</button><script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js';
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.55;document.body.prepend(renderer.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color('#95d8ff');scene.fog=new THREE.Fog('#b4dff9',22,65);const camera=new THREE.PerspectiveCamera(39,innerWidth/innerHeight,.1,100);camera.position.set(0,4.5,16);camera.lookAt(0,1.8,0);
+scene.add(new THREE.HemisphereLight(0xffffff,0x7ca16b,2));const sun=new THREE.DirectionalLight(0xfff1cb,3.5);sun.position.set(-5,10,8);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-16;sun.shadow.camera.right=16;sun.shadow.camera.top=16;sun.shadow.camera.bottom=-16;scene.add(sun);
+const mat=(color,roughness=.75,metalness=0)=>new THREE.MeshStandardMaterial({color,roughness,metalness});const white=mat('#fffaf2'),black=mat('#1d1a22'),red=mat('#dd3644'),darkred=mat('#a82b3b'),gold=mat('#fbc447'),brown=mat('#6a3623'),green=mat('#3eae65');function mesh(g,m,p,x=0,y=0,z=0){let o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;p.add(o);return o}function sphere(p,m,x,y,z,sx,sy,sz){let o=mesh(new THREE.SphereGeometry(1,24,16),m,p,x,y,z);o.scale.set(sx,sy,sz);return o}function box(p,m,x,y,z,sx,sy,sz){return mesh(new THREE.BoxGeometry(sx,sy,sz),m,p,x,y,z)}function cylinder(p,m,x,y,z,r1,r2,h){return mesh(new THREE.CylinderGeometry(r1,r2,h,12),m,p,x,y,z)}
+// Ground and dimensional red doghouse
+box(scene,mat('#83c86b'),0,-.24,0,100,.45,100);const house=new THREE.Group();house.position.set(-3.5,0,-2.3);scene.add(house);box(house,red,0,1.55,0,4,3.1,3.2);const roof=mesh(new THREE.ConeGeometry(3.1,2.0,4),darkred,house,0,4,0);roof.rotation.y=Math.PI/4;roof.scale.z=.8;box(house,mat('#2b1c25'),0,.9,1.635,1.65,1.8,.1);sphere(house,mat('#2b1c25'),0,1.8,1.69,.825,.85,.12);box(house,mat('#b92031'),0,.08,1.75,2.1,.17,.45);
+for(let i=0;i<16;i++){let x=(i%8-3.5)*2.6,z=-9+Math.floor(i/8)*15;const cl=new THREE.Group();cl.position.set(x,0,z);scene.add(cl);cylinder(cl,green,0,.35,0,.035,.05,.7);sphere(cl,gold,0,.78,0,.18,.18,.1)}
+// A lively, storybook 3D neighborhood beyond the red doghouse
+const neighborhood=new THREE.Group();scene.add(neighborhood);
+const palette=['#ffd19d','#b9a5ec','#a8d9e7','#ffb4b9','#f5df95'];
+function cottage(x,z,color,scale=1){const g=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(scale);neighborhood.add(g);
+ box(g,mat(color),0,1.35,0,2.8,2.7,2.6);
+ const r=mesh(new THREE.ConeGeometry(2.42,1.65,4),mat('#a65363'),g,0,3.43,0);r.rotation.y=Math.PI/4;
+ box(g,mat('#fff3db'),0,.85,1.34,.73,1.7,.08);
+ for(const a of [-.77,.77]){box(g,mat('#fff8ef'),a,1.9,1.35,.69,.74,.1);box(g,mat('#77b3cf'),a,1.9,1.42,.53,.59,.08);box(g,white,a,1.9,1.48,.07,.6,.04);}
+ box(g,mat('#8d605a'),.66,3.7,-.4,.42,1.1,.45);
+ return g}
+[[-12,-10,0,1.1],[-6,-13,1,.9],[2,-13,2,1],[9,-11,3,1.2],[14,-5,4,.8],[-13,1,2,.75],[12,2,1,.78]].forEach(([x,z,c,k])=>cottage(x,z,palette[c],k));
+function tree(x,z,scale=1){const g=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(scale);neighborhood.add(g);
+ cylinder(g,mat('#8b5a39'),0,1.5,0,.22,.31,3);
+ for(let j=0;j<5;j++)sphere(g,mat(j%2?'#67b967':'#4eaa76'),Math.sin(j*2.4)*.75,3.25+Math.cos(j*3)*.35,Math.cos(j*2.4)*.55,1.1,.95,1.02);
+ return g}
+[[-16,-5,1.4],[-9,-6,1.1],[5,-8,1.25],[16,-12,1.6],[10,6,.95],[-11,7,1.15]].forEach(a=>tree(...a));
+const walkway=box(scene,mat('#e7c9a3'),-1,-.005,4,2.3,.045,11);walkway.rotation.y=-.13;
+for(let side of [-1,1])for(let j=0;j<13;j++){
+ const x=side*8.7,z=-7+j*1.2;
+ box(scene,white,x,.62,z,.12,1.2,.13);
+ if(j<12)box(scene,white,x,.92,z+.6,.11,.12,1.15);
+}
+const clouds=[];for(let i=0;i<8;i++){const g=new THREE.Group();scene.add(g);g.position.set(-17+i*4.6,8+(i%3)*1.4,-15-i%2*5);
+ for(let k=0;k<4;k++)sphere(g,mat('#fff9f2'),(k-1.5)*.75,Math.sin(k*2)*.15,0,.9,.55,.65);
+ clouds.push(g)}
+const butterflies=[];for(let i=0;i<10;i++){const g=new THREE.Group();scene.add(g);g.position.set(-9+i*2,1.5+(i%3),-2+i%4);
+ const body=sphere(g,black,0,0,0,.045,.17,.05);
+ const wings=[];for(const d of [-1,1]){const wing=sphere(g,mat(i%2?'#ff93bc':'#f9d765'),d*.18,0,0,.23,.3,.055);wings.push(wing)}butterflies.push({g,wings,i})}
+const balloons=[];for(let i=0;i<11;i++){const g=new THREE.Group();scene.add(g);g.position.set(-9+i*1.9,3+(i%4)*.6,-6-i%3);
+ sphere(g,mat(['#f8a7c8','#a5c8f2','#fff2aa'][i%3]),0,.8,0,.31,.42,.3);
+ cylinder(g,white,0,.17,0,.008,.008,.9);balloons.push(g)}
+const fireflies=[];for(let i=0;i<50;i++){const m=new THREE.MeshBasicMaterial({color:i%2?'#fff0ae':'#fff8e4'});const p=sphere(scene,m,0,0,0,.045,.045,.045);fireflies.push(p)}
+// Rounded 3D beagle-like dog, separate modeled pieces
+const dog=new THREE.Group();dog.position.set(-3.2,0,2.0);scene.add(dog);const torso=sphere(dog,white,0,1.15,0,.68,.85,.54);const head=new THREE.Group();head.position.set(0,2.18,.17);dog.add(head);sphere(head,white,0,0,0,.81,.72,.7);sphere(head,white,.25,-.21,.59,.64,.35,.54);sphere(head,black,.56,-.13,1.0,.17,.16,.16);const ear=sphere(head,black,-.75,-.08,-.03,.36,.72,.2);ear.rotation.z=-.25;sphere(head,black,-.28,.14,.66,.09,.12,.07);sphere(head,black,.28,.14,.68,.09,.12,.07);sphere(dog,white,-.39,.33,.05,.28,.42,.34);sphere(dog,white,.37,.33,.05,.28,.42,.34);const armL=new THREE.Group(),armR=new THREE.Group();armL.position.set(-.57,1.65,.13);armR.position.set(.57,1.65,.13);dog.add(armL,armR);sphere(armL,white,-.12,-.35,.32,.24,.52,.24);sphere(armR,white,.12,-.35,.32,.24,.52,.24);sphere(dog,white,-.55,1.1,-.42,.4,.2,.25);
+// Sign made of a canvas texture
+const cv=document.createElement('canvas');cv.width=1024;cv.height=480;const ctx=cv.getContext('2d');ctx.fillStyle='#fff7e6';ctx.fillRect(0,0,1024,480);ctx.strokeStyle='#c87583';ctx.lineWidth=25;ctx.strokeRect(15,15,994,450);ctx.fillStyle='#a33d67';ctx.textAlign='center';ctx.font='bold 78px system-ui';ctx.fillText('¡FELIZ DÍA',512,185);ctx.fillText('DE LA NIÑA! 💗',512,290);const sign=new THREE.Group();dog.add(sign);sign.position.set(0,2.1,1.2);box(sign,mat('#b58452'),0,0,-.09,2.6,1.35,.15);let paper=mesh(new THREE.PlaneGeometry(2.5,1.25),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cv),side:THREE.DoubleSide}),sign,0,0,.01);sign.visible=false;
+// Flowers bouquet modeled in actual 3D
+const bouquet=new THREE.Group();dog.add(bouquet);bouquet.position.set(.25,1.7,1.15);const flowers=[];function flower(parent,x,y,z,scale=1){const g=new THREE.Group();g.position.set(x,y,z);g.scale.setScalar(scale);parent.add(g);let stem=cylinder(g,green,0,-.45,0,.035,.04,.9);stem.rotation.z=.1;for(let k=0;k<12;k++){let a=k*Math.PI/6;let petal=sphere(g,gold,Math.cos(a)*.26,Math.sin(a)*.26,0,.18,.12,.07);petal.rotation.z=a;}sphere(g,brown,0,0,.06,.21,.21,.1);return g}for(let i=0;i<7;i++)flowers.push(flower(bouquet,(i%3-1)*.3,Math.floor(i/3)*.29,Math.sin(i)*.12,.85));bouquet.visible=false;
+// Floating petals form heart in 3D space
+const petals=[];for(let i=0;i<95;i++){let p=sphere(scene,i%3===0?mat('#f6a4ba'):gold,0,-10,0,.12,.17,.065);petals.push(p)}
+// Golden cinematic finale: glowing sun, rising flower particles, and a camera tilt to the sky.
+const sunsetSun=new THREE.Mesh(new THREE.SphereGeometry(2.2,32,24),new THREE.MeshBasicMaterial({color:'#ffe7a5',transparent:true,opacity:.92}));sunsetSun.position.set(7,7,-24);scene.add(sunsetSun);
+const halo=new THREE.Mesh(new THREE.SphereGeometry(3.6,32,24),new THREE.MeshBasicMaterial({color:'#ffd49a',transparent:true,opacity:.16,depthWrite:false}));halo.position.copy(sunsetSun.position);scene.add(halo);
+const cinematicSky=new THREE.Color('#f7a8a0');
+const caption=document.getElementById('caption'),intro=document.getElementById('intro'),final=document.getElementById('final'),start=document.getElementById('start');let started=false,t0=0;function message(s){caption.textContent=s;caption.classList.toggle('show',!!s)}function ease(x){return x*x*(3-2*x)}function lerp(a,b,t){return a+(b-a)*t}start.onclick=()=>{started=true;t0=performance.now();start.style.display='none';};
+function frame(now){requestAnimationFrame(frame);const t=started?(now-t0)/1000:0;const reveal=ease(Math.max(0,Math.min(1,(t-3)/4)));intro.classList.toggle('off',t>3);scene.background=new THREE.Color('#95d8ff').lerp(new THREE.Color('#fbc4dd'),Math.max(0,1-reveal)*.2);camera.position.set(lerp(0,1.2,reveal),lerp(4.5,3.8,reveal),lerp(16,13,reveal));const skyRise=ease(Math.max(0,Math.min(1,(t-23.5)/5.5)));
+const skyHold=ease(Math.max(0,Math.min(1,(t-28)/2)));
+camera.position.y+=skyRise*2.8;
+camera.position.z+=skyRise*2.0;
+camera.lookAt(0,1.75+skyRise*4.4,0);
+scene.background.lerp(cinematicSky,skyRise*.86);
+scene.fog.color.copy(scene.background);
+sun.color.set('#fff1cb').lerp(new THREE.Color('#ffac7b'),skyRise);
+sun.intensity=3.5-skyRise*1.3;
+sunsetSun.material.opacity=skyRise*.93;
+halo.material.opacity=skyRise*.18;
+
+if(t<7){dog.visible=false;message('')}else{dog.visible=true;dog.position.x=t<13?lerp(-3.2,.3,ease(Math.min(1,(t-7)/3))):t<17?lerp(.3,-3.2,ease(Math.min(1,(t-13)/3))):t<21?lerp(-3.2,.5,ease(Math.min(1,(t-17)/3))):.5;dog.position.y=Math.abs(Math.sin(t*7))*.055;head.rotation.z=Math.sin(t*2)*.06;armR.rotation.z=Math.sin(t*3)*.16;sign.visible=t>=10&&t<14;bouquet.visible=t>=19&&t<25;bouquet.rotation.z=t>23?-(t-23)*.4:0;if(t>=10&&t<14)message('¡Te deseo un día lleno de alegría!');else if(t>=14&&t<19)message('Espera… tengo algo más para ti 🌻');else if(t>=19&&t<25)message('¡Un ramo de girasoles para ti!');else message('');}
+for(let i=0;i<petals.length;i++){let p=petals[i];if(t<24){p.visible=false;continue}p.visible=true;let a=i/petals.length*Math.PI*2;let hx=16*Math.pow(Math.sin(a),3)/7,hy=(13*Math.cos(a)-5*Math.cos(2*a)-2*Math.cos(3*a)-Math.cos(4*a))/7;let q=ease(Math.min(1,(t-24)/4));let sx=.4+Math.sin(i*2.7)*.6,sy=1.6+Math.cos(i*3.1)*.4;p.position.set(lerp(sx,hx,q),lerp(sy,hy+4,q),lerp(1.2,0,q));p.rotation.set(t+i,t*.5+i,0);p.scale.setScalar(.6+Math.sin(t*2+i)*.13)}if(t>=29){final.classList.add('show');caption.classList.remove('show')}else final.classList.remove('show');for(let i=0;i<clouds.length;i++)clouds[i].position.x=-17+i*4.6+Math.sin(t*.15+i)*1.7;
+for(const b of butterflies){b.g.position.x+=.002*Math.sin(t+b.i);b.g.position.y=1.3+(b.i%3)*.5+Math.sin(t*2+b.i)*.45;b.g.rotation.y=Math.sin(t+b.i)*.6;
+ b.wings[0].scale.z=.3+Math.abs(Math.sin(t*10+b.i));b.wings[1].scale.z=.3+Math.abs(Math.sin(t*10+b.i));}
+for(let i=0;i<balloons.length;i++){balloons[i].position.y=3+(i%4)*.6+Math.sin(t*.8+i)*.5;balloons[i].position.x=-9+i*1.9+Math.sin(t*.4+i)*.6;}
+for(let i=0;i<fireflies.length;i++){const f=fireflies[i];f.position.set(Math.sin(i*12.73+t*.38)*12,1+Math.abs(Math.sin(i*4.1+t*.7))*5,-5+Math.cos(i*9.2+t*.35)*8);f.visible=t>5;f.scale.setScalar(.5+.5*Math.sin(t*2+i));}
+if(t>7&&t<25)camera.position.x+=Math.sin(t*.35)*.3;
+renderer.render(scene,camera)}requestAnimationFrame(frame);addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+</script></body></html>
